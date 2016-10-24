@@ -6,31 +6,37 @@
 package javaapplication2;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
+ * 2
  *
  * @author eviofragoso
  */
 public class GraphLib {
 
-    private int lines;
-    private int arr[];
+    private int nlines;
+    private int[] arrGraus;
     private int vertex;
+    private ArrayList<String> edge;
+    private ArrayList<ArrayList<Character>> adjcM;
+    private ArrayList<ArrayList<Integer>> al;
 
-    public int getLines() {
-        return lines;
+    public int getNLines() {
+        return this.nlines;
     }
 
-    public void setLines(int lines) {
-        this.lines = lines;
+    public void setNLines(int nlines) {
+        this.nlines = nlines;
     }
 
-    public int[] getArr() {
-        return arr;
+    public int[] getArrGraus() {
+        return arrGraus;
     }
 
-    public void setArr(int[] arr) {
-        this.arr = arr;
+    public void setArrGraus(int[] arrGraus) {
+        this.arrGraus = arrGraus;
     }
 
     public int getVertex() {
@@ -39,6 +45,30 @@ public class GraphLib {
 
     public void setVertex(int vertex) {
         this.vertex = vertex;
+    }
+
+    public ArrayList<String> getEdge() {
+        return edge;
+    }
+
+    public void setEdge(ArrayList<String> edge) {
+        this.edge = edge;
+    }
+
+    public ArrayList<ArrayList<Character>> getAdjcM() {
+        return adjcM;
+    }
+
+    public void setAdjcM(ArrayList<ArrayList<Character>> adjcM) {
+        this.adjcM = adjcM;
+    }
+
+    public ArrayList<ArrayList<Integer>> getAl() {
+        return al;
+    }
+
+    public void setAl(ArrayList<ArrayList<Integer>> al) {
+        this.al = al;
     }
 
     public void getGraph(String fileName) throws Exception {
@@ -51,21 +81,25 @@ public class GraphLib {
         i = Integer.parseInt(in.readLine());
         in.mark(i);
         //System.out.println(i);
-        int arrc[] = new int[i];
+        int[] arrc = new int[i];
         String s;
         //System.out.println(arr.length);
         in.reset();
-        while ((s = in.readLine()) != null && j< arrc.length) {
-            System.out.println(s);
-           // if (j > 0) {
-                System.out.println((Character.getNumericValue(s.charAt(0)))-1);
-                System.out.println((Character.getNumericValue(s.charAt(2)))-1);
-                
-                
-                arrc[Character.getNumericValue(s.charAt(0))-1]++;
-                arrc[Character.getNumericValue(s.charAt(2))-1]++;
-                //System.out.println(arr[i - 1]);
-           // }
+        ArrayList<String> al = new ArrayList<String>();
+        while ((s = in.readLine()) != null) {
+            // System.out.println(s);
+            // if (j > 0) {
+//                System.out.println((Character.getNumericValue(s.charAt(0)))-1);
+//                System.out.println((Character.getNumericValue(s.charAt(2)))-1);
+//                
+            al.add(s);
+            String[] parts = s.split(" ");
+            arrc[Integer.parseInt(parts[0]) - 1]++;
+            arrc[Integer.parseInt(parts[1]) - 1]++;
+            // arrc[Character.getNumericValue(s.charAt(0)) - 1]++;
+            //arrc[Character.getNumericValue(s.charAt(2)) - 1]++;
+            //System.out.println(arr[i - 1]);
+            // }
             linesc++;
             j++;
         }
@@ -73,9 +107,10 @@ public class GraphLib {
         //linesc = linesc - 1;
         in.close();
 
-        this.setArr(arrc);
-        this.setLines(linesc);
+        this.setArrGraus(arrc);
+        this.setNLines(linesc);
         this.setVertex(arrc.length);
+        this.setEdge(al);
 
     }
 
@@ -85,10 +120,10 @@ public class GraphLib {
             BufferedWriter out = new BufferedWriter(fw);
             out.write("# n = " + this.getVertex());
             out.newLine();
-            out.write("# m = " + this.getLines());
+            out.write("# m = " + this.getNLines());
             out.newLine();
-            for (int i = 0; i < this.getArr().length; i++) {
-                out.write((i + 1) + " " + this.getArr()[i]);
+            for (int i = 0; i < this.getArrGraus().length; i++) {
+                out.write((i + 1) + " " + this.getArrGraus()[i]);
                 out.newLine();
             }
 
@@ -99,11 +134,113 @@ public class GraphLib {
         System.out.println("success");
     }
 
+    public void gAdjacencyMatrix(String adjcMatrixFileName) {
+        ArrayList<String> al = new ArrayList<>();
+        //int[][] am = new int[this.getVertex()][this.getVertex()];
+        ArrayList<ArrayList<Character>> am = new ArrayList<ArrayList<Character>>();
+        for (int m = 0; m < this.getVertex(); m++) {
+            am.add(new ArrayList<Character>());
+            for (int n = 0; n < this.getVertex(); n++) {
+                am.get(m).add('0');
+
+            }
+        }
+
+        al = this.getEdge();
+        //System.out.println(this.getVertex());
+        for (String s : al) {
+            String[] parts = s.split(" ");
+
+            // am[Character.getNumericValue(s.charAt(0)) - 1][Character.getNumericValue(s.charAt(2)) - 1] = 1;
+            am.get(Integer.parseInt(parts[0]) - 1).set(Integer.parseInt(parts[1]) - 1, '1');
+            am.get(Integer.parseInt(parts[1]) - 1).set(Integer.parseInt(parts[0]) - 1, '1');
+            // am[Character.getNumericValue(s.charAt(2)) - 1][Character.getNumericValue(s.charAt(0)) - 1] = 1;
+            // System.out.println(am[Character.getNumericValue(s.charAt(0))][Character.getNumericValue(s.charAt(2))]);
+        }
+
+        try {
+            FileWriter fw = new FileWriter(adjcMatrixFileName);
+            BufferedWriter out = new BufferedWriter(fw);
+
+            for (int i = 0; i < this.getVertex(); i++) {
+                out.write("[");
+                for (int j = 0; j < this.getVertex(); j++) {
+
+                    out.write(" " + am.get(i).get(j) + " ");
+                }
+                out.write("]");
+                out.newLine();
+            }
+            out.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+
+        this.setAdjcM(am);
+
+    }
+
+    public void gAdjacencyList(String adjcListFileName) {
+        ArrayList<ArrayList<Integer>> adjcl = new ArrayList<ArrayList<Integer>>();
+        ArrayList<String> edges = new ArrayList<>();
+        edges = this.getEdge();
+        Integer aux;
+
+        for (int m = 0; m < this.getVertex(); m++) {
+            adjcl.add(new ArrayList<Integer>());
+        }
+
+        //System.out.println(this.getVertex());
+        for (String s : edges) {
+
+            String[] parts = s.split(" ");
+
+            if (!adjcl.get(Integer.parseInt(parts[0]) - 1).contains(Integer.parseInt(parts[1]) - 1)) {
+                adjcl.get(Integer.parseInt(parts[0]) - 1).add(Integer.parseInt(parts[1]) - 1);
+            }
+            if (!adjcl.get(Integer.parseInt(parts[1]) - 1).contains(Integer.parseInt(parts[0]) - 1)) {
+                adjcl.get(Integer.parseInt(parts[1]) - 1).add(Integer.parseInt(parts[0]) - 1);
+            }
+
+        }
+
+        try {
+            FileWriter fw = new FileWriter(adjcListFileName);
+            BufferedWriter out = new BufferedWriter(fw);
+
+            for (int i = 0; i < this.getVertex(); i++) {
+                out.write("(" + (i + 1) + ")" + "->");
+                for (int j = 0; j < adjcl.get(i).size(); j++) {
+                    aux = adjcl.get(i).get(j) + 1;
+                    out.write(aux.toString());
+                    if (j != adjcl.get(i).size() - 1) {
+                        out.write("->");
+                    }
+                }
+                out.newLine();
+            }
+            out.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+
+        this.setAl(al);
+        //System.out.println(al.get(0));
+
+    }
+
+    //Busca em largura
+    public void breadthFirstSearch(int iniVertex) {
+
+    }
+
     public static void main(String[] args) throws Exception {
 
         GraphLib gl = new GraphLib();
-        gl.getGraph("graph.txt");
-        gl.generalOutput("graphOutput.txt");
+        gl.getGraph("as_graph.txt");
+       // gl.generalOutput("graphOutput.txt");
+        gl.gAdjacencyMatrix("adjcMatrix.txt");
+       // gl.gAdjacencyList("adjcList.txt");
 
     }
 
