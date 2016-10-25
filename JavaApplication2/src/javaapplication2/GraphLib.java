@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import javaapplication2.Node;
+import java.util.Stack;
 
 /**
  * 2
@@ -232,62 +232,251 @@ public class GraphLib {
     }
 
     //Busca em larguraGraphLib.java:245
-    public void breadthFirstSearch(int iniVertex, String outputName, ArrayList<ArrayList<Integer>> list) {
+    //ERROR TO BE FIXED WHERE CHILD NODES ARE LISTED AS THE SAME LVL AS THEIR PARENT
+    public void breadthFirstSearchAL(int iniVertex, String outputName) {
         try {
-            int lvl = 1, parent;
+            ArrayList<ArrayList<Integer>> list = this.getAl();
+            int lvl = 1, parent, aux;
             FileWriter fw = new FileWriter(outputName);
-            BufferedWriter out = new BufferedWriter(fw); 
+            BufferedWriter out = new BufferedWriter(fw);
             Queue q = new LinkedList();
 
-           // ArrayList<ArrayList<Integer>> list = this.getAl();
+            // ArrayList<ArrayList<Integer>> list = this.getAl();
             ArrayList<Integer> visited = new ArrayList<>();
             //System.out.println(this.getAl());
             // System.out.println(list.get(iniVertex-1));
             // Node root = new Node();
             //root.setValue(list.get(iniVertex-1).get(0));
             //q.add(root);
-            q.add(iniVertex);
+            int pos = iniVertex - 1;
+            q.add(pos);
             out.write("# First Node lvl is 0");
             out.newLine();
             out.write("# Order of writting: Vertex level Parent(If exists)");
             out.newLine();
             out.write(iniVertex + " " + '0');
             out.newLine();
-            visited.add(iniVertex);
+            visited.add(pos);
+            aux = lvl;
             while (!q.isEmpty()) {
                 //Node n = (Node) q.remove();
                 //ArrayList<Node> childN = null;
                 parent = (Integer) q.remove();
                 ArrayList<Integer> child = list.get(parent);
+                aux = lvl;
                 for (Integer i : child) {
+
                     if (!visited.contains(i)) {
                         //Node n1 = new Node();
                         // n1.setParent(n);
                         //n1.setValue(i);
                         //childN.add(n1);
-                        out.write(i + " " + lvl + " " + parent);
+                        out.write(i + 1 + " " + lvl + " " + (parent + 1));
                         out.newLine();
                         visited.add(i);
                         q.add(i);
+                        aux++;
+
                     }
 
                 }
-                lvl++;
+                if (aux != lvl) {
+                    lvl++;
+                }
             }
+            out.close();
         } catch (IOException ex) {
             System.out.println(ex);
         }
 
     }
 
+    public void breadthFirstSearchAM(int iniVertex, String outputName) {
+        try {
+            ArrayList<ArrayList<Character>> list = this.getAdjcM();
+            int lvl = 1, parent, aux;
+            FileWriter fw = new FileWriter(outputName);
+            BufferedWriter out = new BufferedWriter(fw);
+            Queue q = new LinkedList();
+
+            // ArrayList<ArrayList<Integer>> list = this.getAl();
+            ArrayList<Integer> visited = new ArrayList<>();
+            //System.out.println(this.getAl());
+            // System.out.println(list.get(iniVertex-1));
+            // Node root = new Node();
+            //root.setValue(list.get(iniVertex-1).get(0));
+            //q.add(root);
+            int pos = iniVertex - 1;
+            q.add(pos);
+            out.write("# First Node lvl is 0");
+            out.newLine();
+            out.write("# Order of writting: Vertex level Parent(If exists)");
+            out.newLine();
+            out.write(iniVertex + " " + '0');
+            out.newLine();
+            visited.add(pos);
+            aux = lvl;
+            ///int j=0;
+            while (!q.isEmpty()) {
+                //Node n = (Node) q.remove();
+                //ArrayList<Node> childN = null;
+
+                parent = (Integer) q.remove();
+                ArrayList<Character> child = list.get(parent);
+                aux = lvl;
+                //System.out.println(child.size());
+                for (int i = 0; i < child.size(); i++) {
+
+                    if (!visited.contains(i) && child.get(i) == '1') {
+                        //Node n1 = new Node();
+                        // n1.setParent(n);
+                        //n1.setValue(i);
+                        //childN.add(n1);
+                        out.write(i + 1 + " " + lvl + " " + (parent + 1));
+                        out.newLine();
+                        visited.add(i);
+                        q.add(i);
+                        aux++;
+
+                    }
+
+                }
+                if (aux != lvl) {
+                    lvl++;
+                }
+                // j++;
+            }
+            out.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+
+    }
+
+    public void depththFirstSearchAL(int iniVertex, String outputName) {
+        Stack s = new Stack();
+        int aux, lvl = 1;
+        int pos = iniVertex - 1;
+        s.push(pos);
+        ArrayList<Integer> visited = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> list = this.getAl();
+        try {
+            FileWriter fw = new FileWriter(outputName);
+            BufferedWriter out = new BufferedWriter(fw);
+            out.write("# First Node lvl is 0");
+            out.newLine();
+            out.write("# Order of writting: Vertex level Parent(If exists)");
+            out.newLine();
+            out.write(iniVertex + " " + '0');
+            out.newLine();
+            visited.add(pos);
+            
+
+            while (!s.isEmpty()) {
+                Integer parent = (Integer) s.peek();
+
+                ArrayList<Integer> allchilds = list.get(parent);
+                ArrayList<Integer> childs = new ArrayList<>();
+                // aux = lvl;
+                System.out.println(allchilds.size());
+                for (Integer allc : allchilds) {
+                    if (!visited.contains(allc)) {
+                        childs.add(allc);
+                    }
+
+                }
+
+                if (childs.size()>0) {
+                    
+                    out.write(childs.get(0) + 1 + " " + lvl + " " + (parent + 1));
+                    out.newLine();
+                    visited.add(childs.get(0));
+                    s.push(childs.get(0));
+                    
+                    lvl++;
+                } else {
+
+                    s.pop();
+                    lvl--;
+                }
+                
+
+            }
+            out.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+    }
+    
+     public void depththFirstSearchAM(int iniVertex, String outputName){
+      Stack s = new Stack();
+        int aux, lvl = 1;
+        int pos = iniVertex - 1;
+        s.push(pos);
+        ArrayList<Integer> visited = new ArrayList<>();
+        ArrayList<ArrayList<Character>> list = this.getAdjcM();
+        try {
+            FileWriter fw = new FileWriter(outputName);
+            BufferedWriter out = new BufferedWriter(fw);
+            out.write("# First Node lvl is 0");
+            out.newLine();
+            out.write("# Order of writting: Vertex level Parent(If exists)");
+            out.newLine();
+            out.write(iniVertex + " " + '0');
+            out.newLine();
+            visited.add(pos);
+            
+
+            while (!s.isEmpty()) {
+                Integer parent = (Integer) s.peek();
+
+                ArrayList<Character> allchilds = list.get(parent);
+                ArrayList<Integer> childs = new ArrayList<>();
+                // aux = lvl;
+                System.out.println(allchilds.size());
+                for (int i =0;i<allchilds.size();i++) {
+                    if (!visited.contains(i) && allchilds.get(i) == '1') {
+                        childs.add(i);
+                    }
+
+                }
+
+                if (childs.size()>0) {
+                    
+                    out.write(childs.get(0) + 1 + " " + lvl + " " + (parent + 1));
+                    out.newLine();
+                    visited.add(childs.get(0));
+                    s.push(childs.get(0));
+                    
+                    lvl++;
+                } else {
+
+                    s.pop();
+                    lvl--;
+                }
+                
+
+            }
+            out.close();
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+     
+     
+     
+     }
+
     public static void main(String[] args) throws Exception {
 
         GraphLib gl = new GraphLib();
         gl.getGraph("graph.txt");
         // gl.generalOutput("graphOutput.txt");
-        //gl.gAdjacencyMatrix("adjcMatrix.txt");
-        gl.gAdjacencyList("adjcList.txt");
-        gl.breadthFirstSearch(1, "BFSAL.txt", gl.getAl());
+        gl.gAdjacencyMatrix("adjcMatrix.txt");
+        //gl.gAdjacencyList("adjcList.txt");
+        //gl.breadthFirstSearchAL(6, "BFSAL.txt");
+        //gl.breadthFirstSearchAM(6, "BFSAM.txt");
+      //  gl.depththFirstSearchAL(1, "DPSAL");
+        gl.depththFirstSearchAM(1, "DPSAM");
     }
 
 }
