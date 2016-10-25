@@ -7,7 +7,9 @@ package javaapplication2;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import javaapplication2.Node;
 
 /**
  * 2
@@ -224,24 +226,68 @@ public class GraphLib {
             System.out.println(ex);
         }
 
-        this.setAl(al);
+        this.setAl(adjcl);
         //System.out.println(al.get(0));
 
     }
 
-    //Busca em largura
-    public void breadthFirstSearch(int iniVertex) {
+    //Busca em larguraGraphLib.java:245
+    public void breadthFirstSearchAL(int iniVertex, String outputName) {
+        try {
+            int lvl = 1, parent;
+            FileWriter fw = new FileWriter(outputName);
+            BufferedWriter out = new BufferedWriter(fw);
+            Queue q = new LinkedList();
+
+            ArrayList<ArrayList<Integer>> list = this.getAl();
+            ArrayList<Integer> visited = new ArrayList<>();
+            //System.out.println(this.getAl());
+            // System.out.println(list.get(iniVertex-1));
+            // Node root = new Node();
+            //root.setValue(list.get(iniVertex-1).get(0));
+            //q.add(root);
+            q.add(iniVertex);
+            out.write("# First Node lvl is 0");
+            out.newLine();
+            out.write("# Order of writting: Vertex level Parent(If exists)");
+            out.newLine();
+            out.write(iniVertex + " " + '0');
+            out.newLine();
+            visited.add(iniVertex);
+            while (!q.isEmpty()) {
+                //Node n = (Node) q.remove();
+                //ArrayList<Node> childN = null;
+                parent = (Integer) q.remove();
+                ArrayList<Integer> child = list.get(parent);
+                for (Integer i : child) {
+                    if (!visited.contains(i)) {
+                        //Node n1 = new Node();
+                        // n1.setParent(n);
+                        //n1.setValue(i);
+                        //childN.add(n1);
+                        out.write(i + " " + lvl + " " + parent);
+                        out.newLine();
+                        visited.add(i);
+                        q.add(i);
+                    }
+
+                }
+                lvl++;
+            }
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
 
     }
 
     public static void main(String[] args) throws Exception {
 
         GraphLib gl = new GraphLib();
-        gl.getGraph("as_graph.txt");
-       // gl.generalOutput("graphOutput.txt");
-        gl.gAdjacencyMatrix("adjcMatrix.txt");
-       // gl.gAdjacencyList("adjcList.txt");
-
+        gl.getGraph("graph.txt");
+        // gl.generalOutput("graphOutput.txt");
+        //gl.gAdjacencyMatrix("adjcMatrix.txt");
+        gl.gAdjacencyList("adjcList.txt");
+        gl.breadthFirstSearchAL(1, "BFSAL.txt");
     }
 
 }
