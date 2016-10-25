@@ -232,14 +232,14 @@ public class GraphLib {
     }
 
     //Busca em larguraGraphLib.java:245
-    public void breadthFirstSearchAL(int iniVertex, String outputName) {
+    public void breadthFirstSearch(int iniVertex, String outputName, ArrayList<ArrayList<Integer>> list) {
         try {
             int lvl = 1, parent;
             FileWriter fw = new FileWriter(outputName);
-            BufferedWriter out = new BufferedWriter(fw);
+            BufferedWriter out = new BufferedWriter(fw); 
             Queue q = new LinkedList();
 
-            ArrayList<ArrayList<Integer>> list = this.getAl();
+           // ArrayList<ArrayList<Integer>> list = this.getAl();
             ArrayList<Integer> visited = new ArrayList<>();
             //System.out.println(this.getAl());
             // System.out.println(list.get(iniVertex-1));
@@ -287,7 +287,7 @@ public class GraphLib {
         // gl.generalOutput("graphOutput.txt");
         //gl.gAdjacencyMatrix("adjcMatrix.txt");
         gl.gAdjacencyList("adjcList.txt");
-        gl.breadthFirstSearchAL(1, "BFSAL.txt");
+        gl.breadthFirstSearch(1, "BFSAL.txt", gl.getAl());
     }
 
 }
